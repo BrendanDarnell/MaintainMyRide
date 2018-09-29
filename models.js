@@ -2,15 +2,15 @@
 
 const mongoose = require("mongoose");
 
-const userSchema = mongoose.Schema({
+const usersSchema = mongoose.Schema({
 	firstName: {type: String, required: true},
 	lastName: {type: String, required: true},
-	userName: {type: String, required: true},
+	username: {type: String, required: true},
 	password: {type: String, required: true},
 	vehicles: [vehicleSchema]
 })
 
-const vehicleSchema = mongoose.Schema({
+const vehiclesSchema = mongoose.Schema({
 	make: {type: String, required: true},
 	model: {type: String, required: true}, 
 	year: {type: Date, required: true},
@@ -26,3 +26,23 @@ const maintenanceSchema = mongoose.Schema({
 	notes: {type: String},
 	links: {type: String}
 })
+
+userSchema.virtual('fullName').get(function() {
+ 	return `${this.author.firstName} ${this.author.lastName}`
+});
+
+userSchema.methods.serialize = function() {
+	return {
+		name: this.fullName,
+		userName: this.username,
+		vehicles: this.vehicles
+	}
+}
+
+const Users = mongoose.model('Users', userSchema);
+
+const Vehicles = mongoose.model('Vehicles', vehiclesSchema);
+
+const Maintenance = mongoose.model('Maintenance', maintenanceSchema)
+
+module.exports = {Users, Vehicles, Maintenance}
