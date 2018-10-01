@@ -14,7 +14,7 @@ const {TEST_DATABASE_URL} = require('../config');
 
 
 
-describe('Requests to root directory', function(){
+describe('GET requests to /', function(){
 
 	before(function(){
 		return runServer(TEST_DATABASE_URL);
