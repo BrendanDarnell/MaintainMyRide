@@ -6,7 +6,7 @@ const vehiclesSchema = mongoose.Schema({
 	make: {type: String, required: true},
 	model: {type: String, required: true}, 
 	year: {type: Date, required: true},
-	name: {type: String, default: this.make},
+	name: {type: String, default: this.model},
 	engine: {type: String},
 });
 
