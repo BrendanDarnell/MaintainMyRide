@@ -6,7 +6,7 @@ const vehiclesSchema = mongoose.Schema({
 	make: {type: String, required: true},
 	model: {type: String, required: true}, 
 	year: {type: Date, required: true},
-	name: {type: String, default: this.model},
+	name: {type: String, required: true},
 	engine: {type: String},
 });
 
@@ -19,6 +19,7 @@ const usersSchema = mongoose.Schema({
 });
 
 const maintenanceSchema = mongoose.Schema({
+	username: {type: String, required: true},
 	vehicleId: {type: mongoose.Schema.Types.ObjectId, ref: 'Vehicle'},
 	type: {type: String, required: true},
 	mileage: {type: String, required: true},
