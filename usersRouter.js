@@ -4,9 +4,11 @@ const router = express.Router();
 
 const {Users, Vehicles, Maintenance} = require('./models');
 
+const options = {new: true}
 
-router.post('/', (req,res) => {
-	const requiredFields = ['username', 'make', 'model', 'year'];
+
+router.post('/vehicle/add', (req,res) => {
+	const requiredFields = ['username', 'make', 'model', 'year', 'name'];
 	requiredFields.forEach((field) => {
 		if (!(field in req.body)){
 			const message = `Missing \`${field}\` in request body`;
@@ -54,8 +56,8 @@ router.post('/', (req,res) => {
 });
 
 
-router.post('/:vehicleId', (req,res) => {
-	const requiredFields = ['username','vehicleId', 'type', 'mileage'];
+router.post('/maintenance', (req,res) => {
+	const requiredFields = ['username','vehicleName'];
 	requiredFields.forEach((field) => {
 		if (!(field in req.body)){
 			const message = `Missing \`${field}\` in request body`;
@@ -64,32 +66,63 @@ router.post('/:vehicleId', (req,res) => {
 		}	
 	});
 
-	if (!(req.params.vehicleId && req.params.vehicleId === req.body.vehicleId)) {
-	    const message =
-		    `Request path id (${req.params.id}) and request body id ` +
-		    `(${req.body.id}) must match`;
-		console.error(message);
-		return res.status(400).json({ message: message });
-    }
+	Users.findOne({username: req.body.username})
+    .then(user => {
+    	return user.vehicles.find((vehicle) => {
+    		console.log(vehicle.name);
+    		console.log(req.body.vehicleName);
+    		return vehicle.name === req.body.vehicleName;
+    	})
+    })
+	.then(vehicle => {
+	    if (vehicle) {
+	   		return Maintenance.find({username: req.body.username, vehicleName: req.body.vehicleName});
+	    }
+	   	else {
+	    	res.status(400).json({message: 'vehicle not found'});
+	    	// return Promise.reject('Could not find vehicle');
+	    }
+	})
+	.then((maintenance) => res.status(200).json(maintenance))
+	.catch(err=> {
+    	console.error(err);
+    	res.status(500).json({message: "Internal server error"});
+    });
+});
+
+
+router.post('/maintenance/add', (req,res) => {
+	const requiredFields = ['username','vehicleName', 'type', 'mileage'];
+	requiredFields.forEach((field) => {
+		if (!(field in req.body)){
+			const message = `Missing \`${field}\` in request body`;
+			console.error(message);
+			return res.status(400).json({message});
+		}	
+	});
+
 
     Users.findOne({username: req.body.username})
     .then(user => {
     	let vehicle = user.vehicles.find((vehicle) => {
     		console.log(vehicle._id);
     		console.log(req.body.vehicleId);
-    		return vehicle._id == req.body.vehicleId;
+    		return vehicle.name === req.body.vehicleName;
     	});
     	console.log(vehicle);
     	return vehicle;
     })
     .then(vehicle => {
     	if (vehicle) {
-    		Maintenance.create(req.body);
+    		return Maintenance.create(req.body);
     	}
     	else {
-    		Promise.reject('Could not find vehicle')
+
+    		res.status(400).json({message: 'vehicle not found'});
+    		// return Promise.reject('Could not find vehicle');
     	}
     })
+    .then((maintenance) => res.status(201).json(maintenance))
     .catch(err=> {
     	console.error(err);
     	res.status(500).json({message: "Internal server error"});
