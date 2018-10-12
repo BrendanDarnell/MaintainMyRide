@@ -1,4 +1,8 @@
 * {
-	color: red;
 	text-align: center;
+}
+
+.redirect-button {
+	/*cursor: pointer;*/
+	color: #0000EE;
 }

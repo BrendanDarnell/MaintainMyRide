@@ -3,10 +3,10 @@
 const mongoose = require("mongoose");
 
 const vehiclesSchema = mongoose.Schema({
+	name: {type: String, required: true},
+	year: {type: Number, required: true},
 	make: {type: String, required: true},
 	model: {type: String, required: true}, 
-	year: {type: Date, required: true},
-	name: {type: String, required: true},
 	engine: {type: String},
 });
 
@@ -20,7 +20,7 @@ const usersSchema = mongoose.Schema({
 
 const maintenanceSchema = mongoose.Schema({
 	username: {type: String, required: true},
-	vehicleId: {type: mongoose.Schema.Types.ObjectId, ref: 'Vehicle'},
+	vehicleName: {type: String, required: true},
 	type: {type: String, required: true},
 	mileage: {type: String, required: true},
 	nextScheduled: {type: String},
@@ -35,7 +35,7 @@ usersSchema.virtual('fullName').get(function() {
 usersSchema.methods.serialize = function() {
 	return {
 		name: this.fullName,
-		userName: this.username,
+		username: this.username,
 		vehicles: this.vehicles
 	}
 }

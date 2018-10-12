@@ -35,7 +35,7 @@ app.use(function (req, res, next) {
 
 app.use('/signup', signupRouter);
 
-// app.use('/login', loginRouter);
+app.use('/login', loginRouter);
 
 app.use('/users', usersRouter);
 

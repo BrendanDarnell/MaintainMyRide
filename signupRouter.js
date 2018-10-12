@@ -60,10 +60,10 @@ router.post('/', (req, res) => {
 	
 
 
-	.then(users => {
+	.then(user => {
 		// users.forEach(user => {
-		if (users) { 
-			if (users.username === req.body.username) {
+		if (user) { 
+			if (user.username === req.body.username) {
 				console.log('user exists');
 				res.status(400).json({message: 'username already exists'});
 				return Promise.reject('User exists');		
