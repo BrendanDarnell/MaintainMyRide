@@ -23,6 +23,7 @@ const maintenanceSchema = mongoose.Schema({
 	vehicleName: {type: String, required: true},
 	type: {type: String, required: true},
 	mileage: {type: String, required: true},
+	date: {type: String, required: true},
 	nextScheduled: {type: String},
 	notes: {type: String},
 	links: {type: String},

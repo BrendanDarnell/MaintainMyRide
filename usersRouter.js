@@ -114,10 +114,10 @@ router.post('/maintenance/add', (req,res) => {
     })
     .then(vehicle => {
     	if (vehicle) {
-    		return Maintenance.create(req.body);
+    		Maintenance.create(req.body);
+    		return Maintenance.find({username: req.body.username, vehicleName: req.body.vehicleName});
     	}
     	else {
-
     		res.status(400).json({message: 'vehicle not found'});
     		// return Promise.reject('Could not find vehicle');
     	}
