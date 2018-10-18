@@ -288,7 +288,7 @@ function handleEvents() {
 		console.log('adding new log');
 		let vehicleName = $(event.currentTarget).closest('div').attr('name');
 		addMaint(vehicleName)
-			.then(maint=>console.log(maint))
+			// .then(maint=>console.log(maint))
 			.then(renderMaintenace);
 		$('.add-maint').prop('hidden', true);
 	});
