@@ -52,6 +52,7 @@ function renderUserData(user) {
 	$('.user').append(
 		`<h2 class="username">${user.username}</h2>
 		<button type="button" class="add-vehicle-button">Add Vehicle</button>
+		<span class="vehicle-error"></>	
 		<form class="add-vehicle" aria-live="assertive" hidden>
 			<label for="year">Year</label>
 			<input type="text" name="year">
@@ -103,6 +104,8 @@ function getVehicleData() {
 
 function addVehicle() {
 	let newVehicle = getVehicleData();
+
+	$('.vehicle-error').text("");
 	
 	if(!newVehicle.name) {
 		delete newVehicle.name;
@@ -115,7 +118,9 @@ function addVehicle() {
 		contentType: 'application/json',
 		dataType: 'json',
 	})
-	.fail(()=> console.log('failed to add new vehicle'));
+	.fail(function(jqXHR) {
+		$('.vehicle-error').text(jqXHR.responseJSON.message)
+	});
 }
 
 

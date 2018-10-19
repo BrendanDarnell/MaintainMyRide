@@ -94,45 +94,47 @@ describe('/users endpoint', function(){
 		return closeServer();
 	});
 
-	it('Should add new vehicle on Post requests to vehicle/add', function(){
-		
-		return chai.request(app)
-			.post('/users/vehicle/add')
-			.send(newVehicle)
-			.then(function(res) {
-				console.log(existingUser);
-				expect(res).to.have.status(201);
-				expect(res).to.be.json;
-				expect(res.body).to.be.a('object');
-		        expect(res.body).to.include.keys('name','username','vehicles');
-		        expect(res.body.username).to.equal(existingUser.username);
-		        expect(res.body.vehicles).to.be.an('array');
-		        expect(res.body.vehicles).to.have.lengthOf(1);
-		        console.log(res.body.vehicles[0]);
-		        existingUser.vehicles.push(res.body.vehicles[0]);
-		    	return Users.findOne({username: existingUser.username})    
-		    })
-		    .then(function(user) {
-		    	console.log(`after push vehicle ${existingUser}`);
-		    	expect(user._id).to.not.be.empty;
-		    	expect(user.username).to.equal(existingUser.username);
-		    	expect(user.firstName).to.equal(existingUser.firstName);
-		    	expect(user.lastName).to.equal(existingUser.lastName);
-		    	expect(user.password).to.equal(existingUser.password);
-		    	expect(user.vehicles).to.have.lengthOf(1);
-		    	user.vehicles.forEach(function(vehicle) {
-		    		let existingVehicle = existingUser.vehicles.find(function(matchingVehicle) {
-		    			console.log(`matching vehicle name = ${matchingVehicle.name}`);
-		    			console.log(`user vehicle name = ${vehicle.name}`);
-		    			return matchingVehicle.name === vehicle.name; 	
-		    		});
-		    		console.log(`existing vehicle = ${existingVehicle}`)
-		    		expect(vehicle.name).to.equal(existingVehicle.name);
-		    		expect(vehicle.year).to.equal(existingVehicle.year);
-		    		expect(vehicle.make).to.equal(existingVehicle.make);
-		    		expect(vehicle.model).to.equal(existingVehicle.model);
-		    		expect(vehicle.engine).to.equal(existingVehicle.engine);
-		    	});		
-		    });
-	});	
+	describe('users/vehicles/add', function() {
+		it('Should add new vehicle on Post requests to vehicle/add', function(){
+			
+			return chai.request(app)
+				.post('/users/vehicle/add')
+				.send(newVehicle)
+				.then(function(res) {
+					console.log(existingUser);
+					expect(res).to.have.status(201);
+					expect(res).to.be.json;
+					expect(res.body).to.be.a('object');
+			        expect(res.body).to.include.keys('name','username','vehicles');
+			        expect(res.body.username).to.equal(existingUser.username);
+			        expect(res.body.vehicles).to.be.an('array');
+			        expect(res.body.vehicles).to.have.lengthOf(1);
+			        console.log(res.body.vehicles[0]);
+			        existingUser.vehicles.push(res.body.vehicles[0]);
+			    	return Users.findOne({username: existingUser.username})    
+			    })
+			    .then(function(user) {
+			    	console.log(`after push vehicle ${existingUser}`);
+			    	expect(user._id).to.not.be.empty;
+			    	expect(user.username).to.equal(existingUser.username);
+			    	expect(user.firstName).to.equal(existingUser.firstName);
+			    	expect(user.lastName).to.equal(existingUser.lastName);
+			    	expect(user.password).to.equal(existingUser.password);
+			    	expect(user.vehicles).to.have.lengthOf(1);
+			    	user.vehicles.forEach(function(vehicle) {
+			    		let existingVehicle = existingUser.vehicles.find(function(matchingVehicle) {
+			    			console.log(`matching vehicle name = ${matchingVehicle.name}`);
+			    			console.log(`user vehicle name = ${vehicle.name}`);
+			    			return matchingVehicle.name === vehicle.name; 	
+			    		});
+			    		console.log(`existing vehicle = ${existingVehicle}`)
+			    		expect(vehicle.name).to.equal(existingVehicle.name);
+			    		expect(vehicle.year).to.equal(existingVehicle.year);
+			    		expect(vehicle.make).to.equal(existingVehicle.make);
+			    		expect(vehicle.model).to.equal(existingVehicle.model);
+			    		expect(vehicle.engine).to.equal(existingVehicle.engine);
+			    	});		
+			    });
+		});	
+	});
 });
