@@ -52,7 +52,7 @@ function renderUserData(user) {
 	$('.user').append(
 		`<h2 class="username">${user.username}</h2>
 		<button type="button" class="add-vehicle-button">Add Vehicle</button>
-		<span class="vehicle-error"></>	
+		<span class="vehicle-error"></span>	
 		<form class="add-vehicle" aria-live="assertive" hidden>
 			<label for="year">Year</label>
 			<input type="text" name="year">

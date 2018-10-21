@@ -48,7 +48,7 @@ function tearDownDb() {
 
 
 describe('POST requests to /login', function(){
-
+	this.timeout(5000);
 	let existingUser;
 
 	before(function(){
@@ -86,18 +86,6 @@ describe('POST requests to /login', function(){
 		        expect(res.body.vehicles).to.be.an('array');
 		        expect(res.body.vehicles).to.have.lengthOf(existingUser.vehicles.length);
 		    })
-		
-			 //        return Users.findOne({username: newUser.username})
-				// });
-				// .then(function(user) {
-				// 	console.log(user);
-				// 	expect(user.username).to.equal(newUser.username);
-				// 	expect(user.firstName).to.equal(newUser.firstName);
-				// 	expect(user.lastName).to.equal(newUser.lastName);
-				// 	expect(user.password).to.equal(newUser.password);
-				// 	expect(user._id).to.not.be.empty;
-				// })
-	// 	});
 	});
 
 	it('Should reject login requests without credentials', function() {
@@ -117,8 +105,4 @@ describe('POST requests to /login', function(){
 				expect(res).to.have.status(400);
 			})
 	});
-
-
-
-
 });

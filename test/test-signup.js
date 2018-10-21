@@ -48,6 +48,7 @@ function tearDownDb() {
 
 
 describe('POST requests to /signup', function(){
+	this.timeout(5000);
 
 	before(function(){
 		return runServer(TEST_DATABASE_URL);
@@ -83,6 +84,7 @@ describe('POST requests to /signup', function(){
 			})
 			.then(function(user) {
 				console.log(user);
+				expect(user._id).to.not.be.empty;
 				expect(user.username).to.equal(newUser.username);
 				expect(user.firstName).to.equal(newUser.firstName);
 				expect(user.lastName).to.equal(newUser.lastName);

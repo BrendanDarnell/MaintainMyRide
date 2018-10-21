@@ -15,7 +15,7 @@ const {TEST_DATABASE_URL} = require('../config');
 
 
 describe('GET requests to /', function(){
-
+	this.timeout(5000);
 	before(function(){
 		return runServer(TEST_DATABASE_URL);
 	});

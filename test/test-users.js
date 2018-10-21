@@ -16,7 +16,7 @@ const {app, runServer, closeServer} = require('../server');
 
 const {TEST_DATABASE_URL} = require('../config');
 
-const {Users} = require('../models');
+const {Users, Vehicles, Maintenance} = require('../models');
 
 
 function generateUserData() {
@@ -48,12 +48,15 @@ function tearDownDb() {
 
 
 describe('/users endpoint', function(){
+	this.timeout(5000);
 	
 	let existingUser;
 
 	let newVehicle;
 
 	let newMaint;
+
+	let newMaintTwo;
 
 	before(function(){
 		return runServer(TEST_DATABASE_URL);
@@ -81,6 +84,17 @@ describe('/users endpoint', function(){
 					notes: "replaced drain plug",
 					links: "www.fix-this.com"
 				}
+				newMaintTwo = {
+				username: existingUser.username,
+				vehicleName: "Frontier",
+				type: "replace brake pads and rotors",
+				mileage: "175,000",
+				date: "10/19/2018",
+				nextScheduled: "180,000 miles",
+				notes: "brake fluid was low",
+				links: "www.fix-this.com"
+				}
+
 				// console.log(existingUser);
 				return existingUser;
 			});
@@ -94,8 +108,10 @@ describe('/users endpoint', function(){
 		return closeServer();
 	});
 
-	describe('users/vehicles/add', function() {
-		it('Should add new vehicle on Post requests to vehicle/add', function(){
+	
+	describe('/users/vehicles/add', function() {
+		// this.timeout(5000);
+		it('Should add a new vehicle on Post requests', function(){
 			
 			return chai.request(app)
 				.post('/users/vehicle/add')
@@ -109,12 +125,10 @@ describe('/users endpoint', function(){
 			        expect(res.body.username).to.equal(existingUser.username);
 			        expect(res.body.vehicles).to.be.an('array');
 			        expect(res.body.vehicles).to.have.lengthOf(1);
-			        console.log(res.body.vehicles[0]);
 			        existingUser.vehicles.push(res.body.vehicles[0]);
 			    	return Users.findOne({username: existingUser.username})    
 			    })
 			    .then(function(user) {
-			    	console.log(`after push vehicle ${existingUser}`);
 			    	expect(user._id).to.not.be.empty;
 			    	expect(user.username).to.equal(existingUser.username);
 			    	expect(user.firstName).to.equal(existingUser.firstName);
@@ -123,11 +137,8 @@ describe('/users endpoint', function(){
 			    	expect(user.vehicles).to.have.lengthOf(1);
 			    	user.vehicles.forEach(function(vehicle) {
 			    		let existingVehicle = existingUser.vehicles.find(function(matchingVehicle) {
-			    			console.log(`matching vehicle name = ${matchingVehicle.name}`);
-			    			console.log(`user vehicle name = ${vehicle.name}`);
 			    			return matchingVehicle.name === vehicle.name; 	
 			    		});
-			    		console.log(`existing vehicle = ${existingVehicle}`)
 			    		expect(vehicle.name).to.equal(existingVehicle.name);
 			    		expect(vehicle.year).to.equal(existingVehicle.year);
 			    		expect(vehicle.make).to.equal(existingVehicle.make);
@@ -137,4 +148,45 @@ describe('/users endpoint', function(){
 			    });
 		});	
 	});
+
+	
+	describe('/users/maintenance', function() {
+
+		it('Should return all maintenace logs for specified user and vehicle on Post request', function() {
+			
+			existingUser.vehicles.push(newVehicle);
+			existingUser.save();		
+			return Maintenance.insertMany([newMaint, newMaintTwo])
+				.then(function(maint) {
+					console.log(maint);
+					console.log(`/maint ${existingUser}`)
+					return chai.request(app)
+						.post('/users/maintenance')
+						.send({username: existingUser.username, vehicleName: "Frontier"});
+				})
+				.then(function(res) {
+					console.log(res.body);
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('array');
+			        expect(res.body).to.have.lengthOf(2);			        
+			        res.body.forEach(function(log) {
+			      		expect(log).to.include.keys('username','vehicleName','type','mileage','date',
+			        		'notes','links','nextScheduled');
+			        	expect(log.username).to.equal(existingUser.username); 
+			        	expect(log.vehicleName).to.equal('Frontier');
+			        	expect(log.type).to.not.be.empty;
+			        	expect(log.mileage).to.not.be.empty;
+			        	expect(log.date).to.not.be.empty;
+			        	expect(log.notes).to.not.be.empty;
+			        	expect(log.links).to.not.be.empty;
+			        	expect(log.nextScheduled).to.not.be.empty;
+			        });		
+				});
+		}); 
+	});
+
+
+	describe()
+
 });

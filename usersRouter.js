@@ -92,7 +92,7 @@ router.post('/maintenance', (req,res) => {
 
 
 router.post('/maintenance/add', (req,res) => {
-	const requiredFields = ['username','vehicleName', 'type', 'mileage'];
+	const requiredFields = ['username','vehicleName', 'type', 'mileage','date'];
 	requiredFields.forEach((field) => {
 		if (!(field in req.body)){
 			const message = `Missing \`${field}\` in request body`;
