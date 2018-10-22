@@ -130,6 +130,36 @@ router.post('/maintenance/add', (req,res) => {
     	res.status(500).json({message: "Internal server error"});
     });
 });
+
+router.put('/maintenance/update', (req,res) => {
+	if(!req.body._id) {
+		return res.status(400).json({message: 'An id number is required to update maintenance log'})
+	}
+
+	toUpdate = {};
+	updateableFields = ['type','mileage','date','nextScheduled','notes','links'];
+
+	updateableFields.forEach((field) => {
+		if(field in req.body) {
+			toUpdate[field] = req.body[field];
+		}
+	});
+
+	Maintenance.findByIdAndUpdate(req.body._id,toUpdate)
+	.then((log) => {
+		if(!log) {
+			return res.status(400).json({message: 'Could not update maintenance log'});
+		}
+		return Maintenance.find({username: log.username, vehicleName: log.vehicleName})
+	})
+	.then((logs) => {
+		res.status(200).json(logs);
+	})
+	.catch(err=> {
+    	console.error(err);
+    	res.status(500).json({message: "Internal server error"});
+    });	
+});
 	
 
 

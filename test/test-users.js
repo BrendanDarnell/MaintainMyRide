@@ -201,7 +201,7 @@ describe('/users endpoint', function(){
 					expect(res).to.have.status(201);
 					expect(res).to.be.json;
 					expect(res.body).to.be.an('array');
-					return res.body.forEach(function(log) {
+					res.body.forEach(function(log) {
 				        expect(log).to.include.keys('username','vehicleName','type','mileage','date',
 				        	'notes','links','nextScheduled','_id');
 				        expect(log.username).to.equal(newMaint.username);
@@ -213,23 +213,23 @@ describe('/users endpoint', function(){
 				        expect(log.links).to.equal(newMaint.links);
 				        expect(log.nextScheduled).to.equal(newMaint.nextScheduled);
 				        expect(log._id).to.not.be.empty;
-				    	return Maintenance.findOne({_id: log._id})
-				    		.then(function(log){
-				    			console.log(`log = ${log}`);
-						     	expect(log).to.include.keys('username','vehicleName','type','mileage','date',
-						        	'notes','links','nextScheduled','_id');
-						        expect(log.username).to.equal(newMaint.username);
-						        expect(log.vehicleName).to.equal(newMaint.vehicleName);
-							    expect(log.type).to.equal(newMaint.type);
-					 	        expect(log.mileage).to.equal(newMaint.mileage);
-						        expect(log.date).to.equal(newMaint.date);
-							    expect(log.notes).to.equal(newMaint.notes);
-							    expect(log.links).to.equal(newMaint.links);
-							    expect(log.nextScheduled).to.equal(newMaint.nextScheduled);
-							    expect(log._id).to.not.be.empty;
-			  		    	});    
-					});
+				    });	
+				    return Maintenance.findOne({_id: res.body[0]._id})
 				})
+				.then(function(log){
+		    		console.log(`add log = ${log}`);
+			     	// expect(log).to.include.keys('username','vehicleName','type','mileage','date',
+			      //   	'notes','links','nextScheduled','_id');
+			        expect(log.username).to.equal(newMaint.username);
+			        expect(log.vehicleName).to.equal(newMaint.vehicleName);
+					expect(log.type).to.equal(newMaint.type);
+			        expect(log.mileage).to.equal(newMaint.mileage);
+			        expect(log.date).to.equal(newMaint.date);
+				    expect(log.notes).to.equal(newMaint.notes);
+				    expect(log.links).to.equal(newMaint.links);
+				    expect(log.nextScheduled).to.equal(newMaint.nextScheduled);
+				    expect(log._id).to.not.be.empty;
+			   	});    
 		});
 	});
 
@@ -243,13 +243,13 @@ describe('/users endpoint', function(){
 			return Maintenance.create(newMaint)
 				.then(function(log) {
 					return chai.request(app)
-						.update('/users/maintenance/update')
+						.put('/users/maintenance/update')
 						.send({ _id: log._id, notes:'did not replace drain plug', links: 'www.change-oil.com'})
 						.then(function(res) {
 							expect(res).to.have.status(200);
 							expect(res).to.be.json;
 							expect(res.body).to.be.an('array');
-							return res.body.forEach(function(log) {
+							res.body.forEach(function(log) {
 						        expect(log).to.include.keys('username','vehicleName','type','mileage','date',
 						        	'notes','links','nextScheduled','_id');
 						        expect(log.username).to.equal(newMaint.username);
@@ -260,24 +260,24 @@ describe('/users endpoint', function(){
 						        expect(log.notes).to.equal('did not replace drain plug');
 						        expect(log.links).to.equal('www.change-oil.com');
 						        expect(log.nextScheduled).to.equal(newMaint.nextScheduled);
-						        expect(log._id).to.equal;
-						        return Maintenance.findOne({_id: log._id})
-					    		.then(function(log){
-					    			console.log(`log = ${log}`);
-							     	expect(log).to.include.keys('username','vehicleName','type','mileage','date',
-							        	'notes','links','nextScheduled','_id');
-							        expect(log.username).to.equal(newMaint.username);
-							        expect(log.vehicleName).to.equal(newMaint.vehicleName);
-								    expect(log.type).to.equal(newMaint.type);
-						 	        expect(log.mileage).to.equal(newMaint.mileage);
-							        expect(log.date).to.equal(newMaint.date);
-								    expect(log.notes).to.equal(newMaint.notes);
-								    expect(log.links).to.equal(newMaint.links);
-								    expect(log.nextScheduled).to.equal(newMaint.nextScheduled);
-								    expect(log._id).to.not.be.empty;					
+						        expect(log._id).to.not.be.empty;
+								    });	
+				    		return Maintenance.findOne({_id: res.body[0]._id})
 						})
-				})			
-		})
-	})
+						.then(function(log){
+				    		console.log(`update log = ${log.notes}`);
+					        expect(log.username).to.equal(newMaint.username);
+					        expect(log.vehicleName).to.equal(newMaint.vehicleName);
+							expect(log.type).to.equal(newMaint.type);
+					        expect(log.mileage).to.equal(newMaint.mileage);
+					        expect(log.date).to.equal(newMaint.date);
+						    expect(log.notes).to.equal('did not replace drain plug');
+						    expect(log.links).to.equal('www.change-oil.com');
+						    expect(log.nextScheduled).to.equal(newMaint.nextScheduled);
+						    expect(log._id).to.not.be.empty;
+					   	}); 
+				});
+		});
+	});
 
 });
