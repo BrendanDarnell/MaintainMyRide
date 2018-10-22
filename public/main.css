@@ -1,3 +1,16 @@
 * {
-	color: red;
+	text-align: center;
+}
+
+.redirect-button {
+	/*cursor: pointer;*/
+	color: #0000EE;
+}
+
+li {
+	list-style: none;
+}
+
+h3 {
+	cursor: pointer;
 }

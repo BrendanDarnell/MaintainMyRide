@@ -48,6 +48,7 @@ function tearDownDb() {
 
 
 describe('POST requests to /signup', function(){
+	this.timeout(5000);
 
 	before(function(){
 		return runServer(TEST_DATABASE_URL);
@@ -76,13 +77,14 @@ describe('POST requests to /signup', function(){
 				expect(res).to.have.status(201);
 				expect(res).to.be.json;
 				expect(res.body).to.be.a('object');
-		        expect(res.body).to.include.keys('name','userName','vehicles')
-		        expect(res.body.userName).to.equal(newUser.username);
+		        expect(res.body).to.include.keys('name','username','vehicles')
+		        expect(res.body.username).to.equal(newUser.username);
 		        expect(res.body.vehicles).to.an('array').that.is.empty;
 		        return Users.findOne({username: newUser.username})
 			})
 			.then(function(user) {
 				console.log(user);
+				expect(user._id).to.not.be.empty;
 				expect(user.username).to.equal(newUser.username);
 				expect(user.firstName).to.equal(newUser.firstName);
 				expect(user.lastName).to.equal(newUser.lastName);
