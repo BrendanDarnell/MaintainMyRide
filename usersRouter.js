@@ -101,7 +101,6 @@ router.post('/maintenance/add', (req,res) => {
 		}	
 	});
 
-
     Users.findOne({username: req.body.username})
     .then(user => {
     	let vehicle = user.vehicles.find((vehicle) => {
@@ -131,6 +130,7 @@ router.post('/maintenance/add', (req,res) => {
     });
 });
 
+
 router.put('/maintenance/update', (req,res) => {
 	if(!req.body._id) {
 		return res.status(400).json({message: 'An id number is required to update maintenance log'})
@@ -153,12 +153,29 @@ router.put('/maintenance/update', (req,res) => {
 		return Maintenance.find({username: log.username, vehicleName: log.vehicleName})
 	})
 	.then((logs) => {
-		res.status(200).json(logs);
+		return res.status(200).json(logs);
 	})
 	.catch(err=> {
     	console.error(err);
     	res.status(500).json({message: "Internal server error"});
     });	
+});
+
+
+router.delete('/maintenance/delete', (req,res) => {
+	if(!req.body._id) {
+		return res.status(400).json({message: 'An id number is required to delete maintenance log'})
+	}
+
+	Maintenance.findByIdAndRemove(req.body._id)
+	.then((deletedLog) => {
+		return res.status(200).json(deletedLog);
+	})
+	.catch(err=> {
+    	console.error(err);
+    	res.status(500).json({message: "Internal server error"});
+    });	
+	
 });
 	
 

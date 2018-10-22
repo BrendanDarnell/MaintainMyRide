@@ -1,5 +1,28 @@
 'use strict';
 
+let maintenanceForm = 
+	`<button type="button" class="add-maint-button">Add Maintenance</button>
+	<form class="add-maint" aria-live="assertive" hidden>
+		<label for="type">Type</label>
+		<input type="text" name="type">
+		
+		<label for="mileage">Mileage</label>
+		<input type="text" name="mileage">
+
+		<label for="date">Date</label>
+		<input type="text" name="date">
+			
+		<label for="nextScheduled">Next Scheduled Maintenance</label>
+		<input type="text" name="nextScheduled">
+
+		<label for="notes">Notes</label>
+		<input type="text" name="notes">
+			
+		<label for="links">Links</label>
+		<input type="text" name="links">
+		<button type="submit" class="submit-maint-button">Submit</button>
+	</form>`;
+
 function getSignupData() {
 	return {
 		firstName: $('[name="signup-firstname"]').val(),
@@ -143,8 +166,10 @@ function getMaintenance(vehicleName) {
 
 function renderMaintenace(logs) {
 	let vehicleName = logs[0].vehicleName;
+	
 	$(`[name=${vehicleName}] > ul`).remove();
 	$(`[name=${vehicleName}] > button`).remove();
+	$(`[name=${vehicleName}] > form`).remove();
 	
 	$(`[name = ${vehicleName}]`).append(
 		`<button type="button" class="add-maint-button">Add Maintenance</button>
@@ -190,8 +215,39 @@ function toggleMaintenance() {
 	}
 	else {
 		getMaintenance(vehicleName)
-			.then(renderMaintenace);		
-	}	
+			.then((logs) => {
+				if(logs.length > 0) {
+					renderMaintenace(logs);		
+				}
+				else{
+					$(`[name=${vehicleName}] > button`).remove();
+					$(`[name=${vehicleName}] > form`).remove();
+					$(`[name = ${vehicleName}]`).append(maintenanceForm);
+					// 	`<button type="button" class="add-maint-button">Add Maintenance</button>
+					// 	<form class="add-maint" aria-live="assertive" hidden>
+					// 		<label for="type">Type</label>
+					// 		<input type="text" name="type">
+							
+					// 		<label for="mileage">Mileage</label>
+					// 		<input type="text" name="mileage">
+
+					// 		<label for="date">Date</label>
+					// 		<input type="text" name="date">
+							
+					// 		<label for="nextScheduled">Next Scheduled Maintenance</label>
+					// 		<input type="text" name="nextScheduled">
+
+					// 		<label for="notes">Notes</label>
+					// 		<input type="text" name="notes">
+							
+					// 		<label for="links">Links</label>
+					// 		<input type="text" name="links">
+					// 		<button type="submit" class="submit-maint-button">Submit</button>
+					// 	</form>`
+					// );
+				}
+			});
+	}			
 }
 
 

@@ -214,7 +214,7 @@ describe('/users endpoint', function(){
 				        expect(log.nextScheduled).to.equal(newMaint.nextScheduled);
 				        expect(log._id).to.not.be.empty;
 				    });	
-				    return Maintenance.findOne({_id: res.body[0]._id})
+				    return Maintenance.findOne({_id: res.body[0]._id});
 				})
 				.then(function(log){
 		    		console.log(`add log = ${log}`);
@@ -262,9 +262,9 @@ describe('/users endpoint', function(){
 						        expect(log.nextScheduled).to.equal(newMaint.nextScheduled);
 						        expect(log._id).to.not.be.empty;
 								    });	
-				    		return Maintenance.findOne({_id: res.body[0]._id})
+				    		return Maintenance.findOne({_id: res.body[0]._id});
 						})
-						.then(function(log){
+						.then(function(log) {
 				    		console.log(`update log = ${log.notes}`);
 					        expect(log.username).to.equal(newMaint.username);
 					        expect(log.vehicleName).to.equal(newMaint.vehicleName);
@@ -279,5 +279,31 @@ describe('/users endpoint', function(){
 				});
 		});
 	});
+
+	describe('/users/maintenance/delete', function() {
+
+		it('Should delete the selected maintenance log', function() {
+
+			existingUser.vehicles.push(newVehicle);
+			existingUser.save();
+
+			return Maintenance.create(newMaint)
+				.then(function(log) {
+					console.log(`deleting id ${log}`)
+					return chai.request(app)
+						.del('/users/maintenance/delete')
+						.send({_id: log._id})
+						.then(function(res) {
+							expect(res).to.have.status(200);
+							return Maintenance.findOne({_id: res._id});	
+						})
+						.then(function(deletedLog) {
+							console.log(deletedLog);
+							expect(deletedLog).to.be.null;
+						})
+				})	
+		})
+	})
+
 
 });
