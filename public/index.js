@@ -1,8 +1,7 @@
 'use strict';
 
 let maintenanceForm = 
-	`<button type="button" class="add-maint-button">Add Maintenance</button>
-	<form class="add-maint" aria-live="assertive" hidden>
+	`<form class="add-maint" aria-live="assertive" hidden>
 		<label for="type">Type</label>
 		<input type="text" name="type">
 		
@@ -171,32 +170,13 @@ function renderMaintenace(logs) {
 	$(`[name=${vehicleName}] > button`).remove();
 	$(`[name=${vehicleName}] > form`).remove();
 	
-	$(`[name = ${vehicleName}]`).append(
-		`<button type="button" class="add-maint-button">Add Maintenance</button>
-		<form class="add-maint" aria-live="assertive" hidden>
-			<label for="type">Type</label>
-			<input type="text" name="type">
-			
-			<label for="mileage">Mileage</label>
-			<input type="text" name="mileage">
-
-			<label for="date">Date</label>
-			<input type="text" name="date">
-			
-			<label for="nextScheduled">Next Scheduled Maintenance</label>
-			<input type="text" name="nextScheduled">
-
-			<label for="notes">Notes</label>
-			<input type="text" name="notes">
-			
-			<label for="links">Links</label>
-			<input type="text" name="links">
-			<button type="submit" class="submit-maint-button">Submit</button>
-		</form>`
-	);
-	
+	$(`[name = ${vehicleName}]`).append(`<button type="button" class="add-maint-button">Add Maintenance</button>`);
+	$(`[name = ${vehicleName}]`).append(maintenanceForm);
+		
 	logs.map((log, index) => {
-		$(`[name = ${vehicleName}]`).append(`<ul name=${vehicleName}-${index}></ul>`);
+		$(`[name = ${vehicleName}]`).append(`<button class="update-maint-button" name="update-${log._id}">Update</button>`);
+		$(`[name = ${vehicleName}]`).append(`<button class="delete-maint-button" name="delete-${log._id}">Delete</button>`);
+		$(`[name = ${vehicleName}]`).append(`<ul name="${vehicleName}-${index}" id="${log._id}"></ul>`);
 		let displayFields = ["date", "mileage", "type", "notes", "links", "nextScheduled"];
 		displayFields.forEach(field => {
 			if(field in log) {
@@ -211,7 +191,7 @@ function toggleMaintenance() {
 	let vehicleName = $(event.target).text();
 	let existingLogs = $(`[name=${vehicleName}] > ul`).text();
 	if(existingLogs) {
-		$(`[name=${vehicleName}] > ul, .add-maint-button`).toggle();
+		$(`[name=${vehicleName}] > ul, .add-maint-button, .delete-maint-button, .update-maint-button`).toggle();
 	}
 	else {
 		getMaintenance(vehicleName)
@@ -222,29 +202,8 @@ function toggleMaintenance() {
 				else{
 					$(`[name=${vehicleName}] > button`).remove();
 					$(`[name=${vehicleName}] > form`).remove();
+					$(`[name = ${vehicleName}]`).append(`<button type="button" class="add-maint-button">Add Maintenance</button>`);
 					$(`[name = ${vehicleName}]`).append(maintenanceForm);
-					// 	`<button type="button" class="add-maint-button">Add Maintenance</button>
-					// 	<form class="add-maint" aria-live="assertive" hidden>
-					// 		<label for="type">Type</label>
-					// 		<input type="text" name="type">
-							
-					// 		<label for="mileage">Mileage</label>
-					// 		<input type="text" name="mileage">
-
-					// 		<label for="date">Date</label>
-					// 		<input type="text" name="date">
-							
-					// 		<label for="nextScheduled">Next Scheduled Maintenance</label>
-					// 		<input type="text" name="nextScheduled">
-
-					// 		<label for="notes">Notes</label>
-					// 		<input type="text" name="notes">
-							
-					// 		<label for="links">Links</label>
-					// 		<input type="text" name="links">
-					// 		<button type="submit" class="submit-maint-button">Submit</button>
-					// 	</form>`
-					// );
 				}
 			});
 	}			
@@ -352,6 +311,16 @@ function handleEvents() {
 			// .then(maint=>console.log(maint))
 			.then(renderMaintenace);
 		$('.add-maint').prop('hidden', true);
+	});
+
+	//update an existing user log
+	$('.user').on('click', '.update-maint-button', (event) => {
+		event.preventDefault();
+		event.stopPropagation();
+		let maintID = $(event.target).prop("name");
+		console.log(maintID);
+		console.log('update clicked');
+
 	});
 
 }
