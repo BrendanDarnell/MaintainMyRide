@@ -22,6 +22,7 @@ let maintenanceForm =
 		<button type="submit" class="submit-maint-button">Submit</button>
 	</form>`;
 
+
 function getSignupData() {
 	return {
 		firstName: $('[name="signup-firstname"]').val(),
@@ -238,6 +239,33 @@ function addMaint(vehicleName) {
 }
 
 
+function getMaintUpdate(maintId) {
+	return { 
+		_id: maintId,
+		type: $('[name="type"]').val(),
+		mileage: $('[name="mileage"]').val(),
+		date: $('[name="date"]').val(),
+		nextScheduled: $('[name="nextScheduled"]').val(),
+		notes: $('[name="notes"]').val(),
+		links: $('[name="links"]').val(),
+	}	
+}
+
+
+function updateMaint(maintId) {
+	let updatedMaint = getMaintUpdate(maintId);
+	console.log(updatedMaint);
+	return $.ajax({
+		url: 'users/maintenance/update',
+		type: 'PUT',
+		data: JSON.stringify(updatedMaint),
+		contentType: 'application/json',
+		dataType: 'json',
+	})
+	.fail(()=> console.log('failed to update maintenance'));	
+}
+
+
 function handleEvents() {
 	// submit data to create a new user
 	$('.signup-button').on('click', (event) => {
@@ -313,14 +341,25 @@ function handleEvents() {
 		$('.add-maint').prop('hidden', true);
 	});
 
-	//update an existing user log
+	//show form to update existing log
 	$('.user').on('click', '.update-maint-button', (event) => {
 		event.preventDefault();
 		event.stopPropagation();
-		let maintID = $(event.target).prop("name");
-		console.log(maintID);
-		console.log('update clicked');
-
+		let maintId = $(event.target).prop("name");
+		maintId = maintId.split('-');
+		maintId = maintId[1];
+		$('.add-maint').prop('hidden', false);
+		$('.submit-maint-button').removeClass('submit-maint-button').addClass('submit-update-button').
+			attr('name', `${maintId}`);
+	});		
+		
+	//update an existing user log
+	$('.user').on('click', '.submit-update-button', (event) => {
+		event.preventDefault();
+		event.stopPropagation();
+		let maintId = $(event.target).prop("name");
+		updateMaint(maintId)
+			.then(renderMaintenace);
 	});
 
 }
