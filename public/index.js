@@ -166,6 +166,11 @@ function getMaintenance(vehicleName) {
 
 function renderMaintenace(logs) {
 	let vehicleName = logs[0].vehicleName;
+
+	logs.sort((a,b) => {
+		return Number(b.mileage.replace(/,/g,"")) - Number(a.mileage.replace(/,/g,""));
+	});
+
 	
 	$(`[name=${vehicleName}] > ul`).remove();
 	$(`[name=${vehicleName}] > button`).remove();
@@ -192,7 +197,8 @@ function toggleMaintenance() {
 	let vehicleName = $(event.target).text();
 	let existingLogs = $(`[name=${vehicleName}] > ul`).text();
 	if(existingLogs) {
-		$(`[name=${vehicleName}] > ul, .add-maint-button, .delete-maint-button, .update-maint-button`).toggle();
+		$(`[name=${vehicleName}] > ul, [name=${vehicleName}] > .add-maint-button, 
+			[name=${vehicleName}] > .delete-maint-button, [name=${vehicleName}] > .update-maint-button`).toggle();
 	}
 	else {
 		getMaintenance(vehicleName)
@@ -240,7 +246,7 @@ function addMaint(vehicleName) {
 
 
 function getMaintUpdate(maintId) {
-	return { 
+	let updateValues = { 
 		_id: maintId,
 		type: $('[name="type"]').val(),
 		mileage: $('[name="mileage"]').val(),
@@ -248,7 +254,14 @@ function getMaintUpdate(maintId) {
 		nextScheduled: $('[name="nextScheduled"]').val(),
 		notes: $('[name="notes"]').val(),
 		links: $('[name="links"]').val(),
-	}	
+	}
+
+	Object.keys(updateValues).forEach(key => {
+		if(!updateValues[key]) {
+			delete updateValues[key];
+		}
+	});
+	return updateValues;
 }
 
 
@@ -263,6 +276,18 @@ function updateMaint(maintId) {
 		dataType: 'json',
 	})
 	.fail(()=> console.log('failed to update maintenance'));	
+}
+
+
+function deleteMaint(maintId) {
+	return $.ajax({
+		url: 'users/maintenance/delete',
+		type: 'DELETE',
+		data: `{"_id": "${maintId}"}`,
+		contentType: 'application/json',
+		dataType: 'json',
+	})
+	.fail(()=> console.log('failed to update maintenance'));
 }
 
 
@@ -360,6 +385,22 @@ function handleEvents() {
 		let maintId = $(event.target).prop("name");
 		updateMaint(maintId)
 			.then(renderMaintenace);
+	});
+
+	//delete an existing user log
+	$('.user').on('click', '.delete-maint-button', (event) => {
+		event.preventDefault();
+		event.stopPropagation();
+		let maintId = $(event.target).prop('name');
+		maintId = maintId.split('-');
+		maintId = maintId[1];
+		console.log(maintId);
+		deleteMaint(maintId)
+			.then(() => {
+				$(`[id = ${maintId}]`).remove();
+				$(`[name = update-${maintId}]`).remove();
+				$(`[name = delete-${maintId}]`).remove();
+			});
 	});
 
 }
