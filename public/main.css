@@ -13,7 +13,8 @@ body {
 
 .redirect-button {
 	/*cursor: pointer;*/
-	color: #0000EE;
+	color: white;
+	/*#0000EE;*/
 }
 
 header {
@@ -40,7 +41,12 @@ h1 {
 	top: 30%;
 }
 
-main, section {
+main {
+	height: 100%;
+	width: 100%;
+}
+
+section {
 	height: 85vh;
 	width: 100%;
 	position: relative;
@@ -52,24 +58,69 @@ main, section {
 	background-image: url("motorcycle2.jpg");
 	background-size: cover;
 	background-position: 70% center;
+	/*filter: blur(3px);
+  	-webkit-filter: blur(3px);*/
 }
 
 .div-login-form, .div-signup-form {
+	position: relative;
 	width: 90%;
 	margin-left: auto;
 	margin-right: auto;
+	border: 1px solid black;
+	box-shadow: 3px 3px black;
+	border-radius: 15px;
+	top: -7%;
+	background-color: rgba(28, 29, 33, 0.77); 
 }
 
+.div-login-form {
+	height: 40vh;
+}
 
+.div-signup-form {
+	height: 60vh;
+}
 
+.login-form input, .signup-form input {
+	width: 60%;
+	margin-bottom: 2%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto; 
+	color: black;
+}
 
+.signup-form fieldset {
+	border: none;
+}
 
+.signup-form legend {
+	color: #feda6a;
+}
 
-li {
+.login-form button, .signup-form button {
+	color: black;
+} 
+
+h3 {
+	cursor: pointer;
+	font-size: 1.5em;
+	margin-top: 2%;
+	margin-bottom: 0;
+	text-align: left;
+	padding-left: 4%;
+	background-color: rgba(28, 29, 33, 0.90); 
+}
+
+h4 {
+	margin: 0;
+	background-color: rgba(28, 29, 33, 0.4);
+	color: #feda6a; 
+}
+
+ul {
 	list-style: none;
 	padding: none;
 }
 
-h3 {
-	cursor: pointer;
-}
