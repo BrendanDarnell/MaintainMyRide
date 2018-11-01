@@ -73,7 +73,7 @@ function renderUserData(user) {
 	console.log(user);
 	$('.user').empty();
 	$('.user').append(
-		`<h2 class="username">${user.username}</h2>
+		`<h2 class="welcome-user">Welcome, <span class="username">${user.username}</span></h2>
 		<button type="button" class="add-vehicle-button">Add Vehicle</button>
 		<span class="vehicle-error"></span>	
 		<form class="add-vehicle" aria-live="assertive" hidden>
@@ -153,6 +153,8 @@ function getMaintenance(vehicleName) {
 		vehicleName: vehicleName
 	}
 
+	console.log(reqData);
+
 	return $.ajax({
 		url: 'users/maintenance',
 		type: 'POST',
@@ -195,10 +197,12 @@ function renderMaintenace(logs) {
 
 function toggleMaintenance() {
 	let vehicleName = $(event.target).text();
+	console.log(`toggle ${vehicleName}`);
 	let existingLogs = $(`[name=${vehicleName}] > ul`).text();
 	if(existingLogs) {
 		$(`[name=${vehicleName}] > ul, [name=${vehicleName}] > .add-maint-button, 
-			[name=${vehicleName}] > .delete-maint-button, [name=${vehicleName}] > .update-maint-button`).toggle();
+			[name=${vehicleName}] > .delete-maint-button, 
+			[name=${vehicleName}] > .update-maint-button`).toggle();
 	}
 	else {
 		getMaintenance(vehicleName)

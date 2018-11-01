@@ -47,40 +47,46 @@ main {
 }
 
 section {
-	height: 85vh;
+	min-height: 85vh;
+	height: 100%;
 	width: 100%;
 	position: relative;
 }
 
 .div-login-img {
-	height: 50%;
+	min-height: 85vh;
+	height: 100%;
 	width: 100%; 
 	background-image: url("motorcycle2.jpg");
 	background-size: cover;
-	background-position: 70% center;
+	background-position: 52% center;
 	/*filter: blur(3px);
   	-webkit-filter: blur(3px);*/
 }
 
 .div-login-form, .div-signup-form {
 	position: relative;
-	width: 90%;
-	margin-left: auto;
-	margin-right: auto;
-	border: 1px solid black;
+	/*color: #feda6a;*/
+	/*width: 90%;*/
+	/*margin-left: auto;
+	margin-right: auto;*/
+	/*border: 1px solid black;
 	box-shadow: 3px 3px black;
-	border-radius: 15px;
-	top: -7%;
-	background-color: rgba(28, 29, 33, 0.77); 
+	border-radius: 15px;*/
+	top: -100vh;
+	min-height: 85vh;
+	height: 100%;
+	background-color: rgba(28, 29, 33, 0.65); 
+	/*padding-top: 12vh;*/
 }
 
-.div-login-form {
+/*.div-login-form {
 	height: 40vh;
 }
 
 .div-signup-form {
 	height: 60vh;
-}
+}*/
 
 .login-form input, .signup-form input {
 	width: 60%;
@@ -89,6 +95,12 @@ section {
 	margin-left: auto;
 	margin-right: auto; 
 	color: black;
+}
+
+.div-login-form h2, .div-signup-form h2 {
+	margin-top: 0;
+	padding-top: 3vh;
+	padding-bottom: 3vh;
 }
 
 .signup-form fieldset {
@@ -102,6 +114,62 @@ section {
 .login-form button, .signup-form button {
 	color: black;
 } 
+
+.welcome-user {
+	margin: 0;
+	height: 20vh;
+	background: 
+		linear-gradient(rgba(28, 29, 33, 0.65),rgba(28, 29, 33, 0.65)),
+		url('engine.jpg');
+	background-size: cover;
+	text-align: left;
+	padding: 4%;
+	color: #feda6a; 
+}
+
+.username {
+	color: #feda6a;	
+}
+
+.add-vehicle-button, .submit-vehicle-button {
+	border-radius: 8px;
+	background-color: rgba(28, 29, 33, 0.5);
+}
+
+.add-vehicle-button {
+	height: 5%;	
+	margin-top: 2%;
+}
+
+.submit-vehicle-button {
+	height: 4vh;
+	margin-top: 2vh;
+}
+
+.add-vehicle-button:hover, .submit-vehicle-button:hover {
+	background-color: green;
+}
+
+.add-vehicle {
+	margin-top: 2%;
+}
+
+.add-vehicle > input {
+	margin-top: 1%;
+	display: block;
+	width: 70%;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.add-vehicle > label {
+	display: block;
+	text-align: left;
+	margin-left: 15%;
+	margin-top: 3%;
+
+}
+
 
 h3 {
 	cursor: pointer;
