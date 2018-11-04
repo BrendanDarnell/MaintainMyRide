@@ -1,49 +1,52 @@
-* {
-	text-align: center;
-	box-sizing: border-box;
-	color: #d4d4dc;
+@media screen and (orientation: landscape) and (max-width: 750px) {
+	header {
+		height: 20vh;
+	}
+
+	.logo {
+		height: 50%;
+	}
+
+	.login-form button, .signup-form button {
+		height: 6vh;
+	}
+
+	.welcome-user {
+		height: 30vh;
+	}
+
+	.user button {
+		height: 8vh;
+	}
 }
 
-body {
-	height: 100vh;
-	width: 100vw;
-	margin: 0;
-	background-color: #393f4d;
+@media screen and (min-width: 751px) {
+	input {
+		height: 4vh;
+	}
+
+	label, legend {
+		font-size: 22px;
+	}
+
+	h2 {
+		font-size: 30px;
+	}
+
+	.app-intro {
+		font-size: 1.5em;
+	}
+
+	h3 {
+		height: 5vh;
+		font-size: 2em;
+	}
+
+	h4 {
+		height: 3vh;
+		font-size: 1.3em;
+	}
 }
 
-.redirect-button {
-	/*cursor: pointer;*/
-	color: #0000EE;
-}
 
-header {
-	width: 100%;
-	height: 15%;
-	padding-top: 1.5%;
-	background-color: #1d1e22;
-}
 
-h1 {
-	height: 100%;
-	width: 100%;
-	padding-top: 2.5%;
-	position: relative;
-	margin: 0;
-}
-
-.logo {
-	height: 70%;
-	width: auto;
-	position: absolute;
-	left: 5%;
-	bottom: 15%;
-}
-
-li {
-	list-style: none;
-	padding: none;
-}
-
-h3 {
-	cursor: pointer;
-}
