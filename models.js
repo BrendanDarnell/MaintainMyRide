@@ -26,7 +26,6 @@ const maintenanceSchema = mongoose.Schema({
 	date: {type: String, required: true},
 	nextScheduled: {type: String},
 	notes: {type: String},
-	links: {type: String},
 });
 
 usersSchema.virtual('fullName').get(function() {
