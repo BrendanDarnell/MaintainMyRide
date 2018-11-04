@@ -8,8 +8,8 @@ const {Users} = require('./models');
 router.post('/', (req, res) => {
 	const requiredFields = ['username', 'password'];
 	requiredFields.forEach(field => {
-		if (!(field in req.body)){
-			const message = `Missing \`${field}\` in request body`;
+		if (!(req.body[field])){
+			const message = `Missing ${field}`;
 			console.error(message);
 			return res.status(400).json({message});
 		}	

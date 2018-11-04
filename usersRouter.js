@@ -4,14 +4,14 @@ const router = express.Router();
 
 const {Users, Vehicles, Maintenance} = require('./models');
 
-const options = {new: true}
+// const options = {new: true}
 
 
 router.post('/vehicle/add', (req,res) => {
 	const requiredFields = ['username', 'make', 'model', 'year', 'name'];
 	requiredFields.forEach((field) => {
-		if (!(field in req.body)){
-			const message = `Missing \`${field}\` in request body`;
+		if (!(req.body[field])){
+			const message = `The vehicle ${field} must be provided to add vehicle`;
 			console.error(message);
 			return res.status(400).json({message});
 		}	
@@ -92,12 +92,12 @@ router.post('/maintenance', (req,res) => {
 
 
 router.post('/maintenance/add', (req,res) => {
-	const requiredFields = ['username','vehicleName', 'type', 'mileage','date'];
+	const requiredFields = ['username','vehicleName', 'type', 'mileage', 'date'];
 	requiredFields.forEach((field) => {
 		console.log(field);
 		if (!(req.body[field])){
 			console.log(`missing field = ${field}`);
-			const message = `Missing \`${field}\` in request body`;
+			const message = `A ${field} is required to add maintenance log`;
 			console.error(message);
 			return res.status(400).json({message});
 		}	

@@ -17,9 +17,8 @@ let maintenanceForm =
 		<label for="notes">Notes</label>
 		<input type="text" name="notes">
 			
-		<label for="links">Links</label>
-		<input type="text" name="links">
 		<button type="submit" class="submit-maint-button">Submit</button>
+		<span class="error" name="maint-error"></span>
 	</form>`;
 
 
@@ -43,29 +42,37 @@ function getLoginData() {
 
 function signupUser() {
 	let newUser = getSignupData();
+
+	$('[name= login-error]').text("");
 	
 	return $.ajax({
-		url: '/signup',
-		type: 'POST',
-		data: JSON.stringify(newUser),
-		contentType: 'application/json',
-		dataType: 'json',
-	})
-	.fail(()=> console.log('failed to create user'));
+			url: '/signup',
+			type: 'POST',
+			data: JSON.stringify(newUser),
+			contentType: 'application/json',
+			dataType: 'json',
+		})
+		.fail(function(jqXHR) {
+			$('[name= signup-error]').text(jqXHR.responseJSON.message);
+		});
 }
 
 
 function loginUser() {
 	let existingUser = getLoginData();
+
+	$('[name= login-error]').text("");
 	
 	return $.ajax({
-		url: '/login',
-		type: 'POST',
-		data: JSON.stringify(existingUser),
-		contentType: 'application/json',
-		dataType: 'json',
-	})
-	.fail(()=> console.log('failed to login'));
+			url: '/login',
+			type: 'POST',
+			data: JSON.stringify(existingUser),
+			contentType: 'application/json',
+			dataType: 'json',
+		})
+		.fail(function(jqXHR) {
+			$('[name= login-error]').text(jqXHR.responseJSON.message);
+		});
 }
 
 
@@ -75,7 +82,6 @@ function renderUserData(user) {
 	$('.user').append(
 		`<h2 class="welcome-user">Welcome, <span class="username">${user.username}</span></h2>
 		<button type="button" class="add-vehicle-button">Add Vehicle</button>
-		<span class="vehicle-error"></span>	
 		<form class="add-vehicle" aria-live="assertive" hidden>
 			<label for="year">Year</label>
 			<input type="text" name="year">
@@ -92,6 +98,7 @@ function renderUserData(user) {
 			<label for="engine">Engine</label>
 			<input type="text" name="engine">
 			<button type="submit" class="submit-vehicle-button">Submit</button>
+			<span class="error" name="vehicle-error"></span>
 		</form>`
 	);
 	
@@ -105,7 +112,7 @@ function renderUserData(user) {
 		
 		Object.keys(vehicle).forEach(field => {
 			if(vehicle[field] && field !== "_id") {
-				vehicleInfo += vehicle[field] + " ";
+				vehicleInfo += vehicle[field] + "  ";
 			}
 		});
 		$(`[name= ${vehicleName}]`).append(`<h4 class="vehicle">${vehicleInfo}</h4>` )
@@ -128,22 +135,24 @@ function getVehicleData() {
 function addVehicle() {
 	let newVehicle = getVehicleData();
 
-	$('.vehicle-error').text("");
+	$('[name= vehicle-error]').text("");
 	
 	if(!newVehicle.name) {
-		delete newVehicle.name;
+		newVehicle.name = newVehicle.model;
 	}
+
+	newVehicle.name = newVehicle.name.trim().replace(/ /g,"-");
 	
 	return $.ajax({
-		url: 'users/vehicle/add',
-		type: 'POST',
-		data: JSON.stringify(newVehicle),
-		contentType: 'application/json',
-		dataType: 'json',
-	})
-	.fail(function(jqXHR) {
-		$('.vehicle-error').text(jqXHR.responseJSON.message)
-	});
+			url: 'users/vehicle/add',
+			type: 'POST',
+			data: JSON.stringify(newVehicle),
+			contentType: 'application/json',
+			dataType: 'json',
+		})
+		.fail(function(jqXHR) {
+			$('[name= vehicle-error]').text(jqXHR.responseJSON.message)
+		});
 }
 
 
@@ -156,13 +165,17 @@ function getMaintenance(vehicleName) {
 	console.log(reqData);
 
 	return $.ajax({
-		url: 'users/maintenance',
-		type: 'POST',
-		data: JSON.stringify(reqData),
-		contentType: 'application/json',
-		dataType: 'json',
-	})
-	.fail(()=> console.log('failed to get maintenace logs'));
+			url: 'users/maintenance',
+			type: 'POST',
+			data: JSON.stringify(reqData),
+			contentType: 'application/json',
+			dataType: 'json',
+		})
+		.fail(() => {
+			$(`[name = ${vehicleName}]`).append(
+				`<span class="error">Could not get maintenance logs</span>`
+			);
+		});
 }
 
 
@@ -182,13 +195,18 @@ function renderMaintenace(logs) {
 	$(`[name = ${vehicleName}]`).append(maintenanceForm);
 		
 	logs.map((log, index) => {
-		$(`[name = ${vehicleName}]`).append(`<button class="update-maint-button" name="update-${log._id}">Update</button>`);
-		$(`[name = ${vehicleName}]`).append(`<button class="delete-maint-button" name="delete-${log._id}">Delete</button>`);
+		$(`[name = ${vehicleName}]`).append(`<button type="button" class="update-maint-button" name="update-${log._id}">Update</button>`);
+		$(`[name = ${vehicleName}]`).append(`<button type="button" class="delete-maint-button" name="delete-${log._id}">Delete</button>`);
 		$(`[name = ${vehicleName}]`).append(`<ul name="${vehicleName}-${index}" id="${log._id}"></ul>`);
-		let displayFields = ["date", "mileage", "type", "notes", "links", "nextScheduled"];
+		let displayFields = ["Date", "Mileage", "Type", "Next Scheduled", "Notes"];
 		displayFields.forEach(field => {
-			if(field in log) {
-				$(`[name=${vehicleName}-${index}]`).append(`<li>${field}: ${log[field]}</li>`)
+			if(field.toLowerCase() in log) {
+				$(`[name=${vehicleName}-${index}]`).append(
+					`<li><span class="maint-fields">${field}</span> ${log[field.toLowerCase()]}</li>`)
+			}
+			else if (field === "Next Scheduled" && "nextScheduled" in log) {
+				$(`[name=${vehicleName}-${index}]`).append(
+					`<li><span class="maint-fields">${field}</span> ${log.nextScheduled}</li>`)				
 			}
 		});
 	});
@@ -239,13 +257,15 @@ function addMaint(vehicleName) {
 	let newMaint = newMaintData(vehicleName);
 	console.log(newMaint);
 	return $.ajax({
-		url: 'users/maintenance/add',
-		type: 'POST',
-		data: JSON.stringify(newMaint),
-		contentType: 'application/json',
-		dataType: 'json',
-	})
-	.fail(()=> console.log('failed to add new maintenance'));	
+			url: 'users/maintenance/add',
+			type: 'POST',
+			data: JSON.stringify(newMaint),
+			contentType: 'application/json',
+			dataType: 'json',
+		})
+		.fail(function(jqXHR) {
+			$('[name= maint-error]').text(jqXHR.responseJSON.message);
+		});	
 }
 
 
@@ -279,7 +299,9 @@ function updateMaint(maintId) {
 		contentType: 'application/json',
 		dataType: 'json',
 	})
-	.fail(()=> console.log('failed to update maintenance'));	
+	.fail(function(jqXHR) {
+			$('[name= maint-error]').text(jqXHR.responseJSON.message);
+		});;	
 }
 
 
@@ -300,22 +322,30 @@ function handleEvents() {
 	$('.signup-button').on('click', (event) => {
 		event.preventDefault();
 		event.stopPropagation();
-		$('.signup').prop('hidden', true);
-		$('.user').prop('hidden', false);
+		// $('.signup').prop('hidden', true);
+		// $('.user').prop('hidden', false);
 		console.log('post request for new user');
 		signupUser()
-			.then(renderUserData);
+			.then(user => {
+				$('.signup').prop('hidden', true);
+				$('.user').prop('hidden', false);
+				renderUserData(user);
+			});
 	});
 
 	// submit data to login existing users
 	$('.login-button').on('click', (event) => {
 		event.preventDefault();
 		event.stopPropagation();
-		$('.login').prop('hidden', true);
-		$('.user').prop('hidden', false);
+		// $('.login').prop('hidden', true);
+		// $('.user').prop('hidden', false);
 		console.log('post request for login');
 		loginUser()
-			.then(renderUserData);
+			.then(user => {
+				$('.login').prop('hidden', true);
+				$('.user').prop('hidden', false);	
+				renderUserData(user);
+			});
 	});
 	
 	// redirect to new user signup
@@ -340,8 +370,10 @@ function handleEvents() {
 		event.stopPropagation();
 		console.log('adding new vehicle');
 		addVehicle()
-			.then(renderUserData);
-		$('.add-vehicle').prop('hidden', true);
+			.then(user => {
+				renderUserData(user);
+				$('.add-vehicle').prop('hidden', true);
+			});
 	});
 
 	//toggle maintenance logs for selected vehicle
@@ -366,8 +398,10 @@ function handleEvents() {
 		let vehicleName = $(event.currentTarget).closest('div').attr('name');
 		addMaint(vehicleName)
 			// .then(maint=>console.log(maint))
-			.then(renderMaintenace);
-		$('.add-maint').prop('hidden', true);
+			.then(user => {
+				renderMaintenace(user);
+				$('.add-maint').prop('hidden', true);
+			});
 	});
 
 	//show form to update existing log

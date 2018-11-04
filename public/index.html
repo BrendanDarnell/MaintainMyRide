@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="eng">
+<html lang="en">
 <head>
 	<title>Maintain My Ride</title>
 	<meta charset="utf-8">
@@ -18,7 +18,8 @@
 		
 		<section class="login" role="region">
 			<div class="div-login-img"></div>
-			<div class="div-login-form">	
+			<div class="div-login-form">
+				<p class="app-intro"><span class="intro-question">Do your own mechanic work?</span><br>Never lose track of maintenance records with this easy to use app.</p>	
 				<h2>User Login</h2>
 				<form class="login-form">
 					<label for="login-username">Username</label>
@@ -26,6 +27,7 @@
 					<label for="login-password">Password</label>
 					<input type="password" name="login-password">
 					<button type="submit" class="login-button">Submit</button>
+					<span class="error" name="login-error"></span>
 				</form>
 				<p class="redirect-signup">New users click <a href="" class="redirect-button">here</a> to create an account.</p>
 			</div>
@@ -51,6 +53,7 @@
 						<input type="password" name="signup-password">
 					</fieldset>
 					<button type="submit" class="signup-button">Submit</button>
+					<span class="error" name="signup-error">
 				</form>
 			</div>
 		</section>
