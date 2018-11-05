@@ -4,6 +4,16 @@ const router = express.Router();
 
 const {Users} = require('./models');
 
+const jwt = require('jsonwebtoken')
+
+const createAuthToken = function(user) {
+  return jwt.sign({user}, 'brendan', {
+    subject: user.username,
+    expiresIn: '7d',
+    algorithm: 'HS256'
+  });
+};
+
 
 router.post('/', (req, res) => {
 	const requiredFields = ['username', 'password'];
@@ -27,7 +37,10 @@ router.post('/', (req, res) => {
 			return Promise.reject('wrong password');
 		}
 		else if (user.password === req.body.password) {
-			return res.status(200).json(user.serialize());			
+			let userAndToken = user.serialize();
+			userAndToken.token = createAuthToken(user.serialize());
+			console.log(userAndToken);
+			return res.status(200).json(userAndToken);			
 		}
 		else {
 			res.status(400).json({message: 'could not login'});
