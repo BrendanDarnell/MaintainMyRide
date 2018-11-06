@@ -99,7 +99,8 @@ function renderUserData(user) {
 			<input type="text" name="engine">
 			<button type="submit" class="submit-vehicle-button">Submit</button>
 			<span class="error" name="vehicle-error"></span>
-		</form>`
+		</form>
+		<span class='user-inst'>Click vehicle name to show maintenance logs</span>`
 	);
 	
 	user.vehicles.forEach(vehicle => {
