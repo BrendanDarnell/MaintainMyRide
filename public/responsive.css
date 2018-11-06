@@ -23,6 +23,7 @@
 @media screen and (min-width: 751px) {
 	input {
 		height: 4vh;
+		font-size: 1.5em;
 	}
 
 	label, legend {
@@ -48,5 +49,27 @@
 	}
 }
 
+@media screen and (min-width: 900px) {
+	.welcome-user {
+		height: 30%;
+	}
+
+	.user button {
+		height: 8vh;
+	}
+
+	.user h3 {
+		height: 8vh;
+	}
+
+	.user h4 {
+		height: 5vh;
+	}
+
+	.logo {
+		height: 60%;
+	}
+
+}
 
 
