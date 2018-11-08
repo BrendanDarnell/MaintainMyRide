@@ -4,10 +4,12 @@ const router = express.Router();
 
 const {Users} = require('./models');
 
+const {JWT_SECRET} = require('./config');
+
 const jwt = require('jsonwebtoken')
 
 const createAuthToken = function(user) {
-  return jwt.sign({user}, 'brendan', {
+  return jwt.sign({user}, JWT_SECRET, {
     subject: user.username,
     expiresIn: '7d',
     algorithm: 'HS256'
@@ -32,11 +34,11 @@ router.post('/', (req, res) => {
 			res.status(400).json({message: 'username does not exist'});
 			return Promise.reject('username does not exist');		
 		}
-		else if (user.password !== req.body.password) {
+		else if (!user.validatePassword(req.body.password)) {
 			res.status(400).json({message: 'wrong password'});
 			return Promise.reject('wrong password');
 		}
-		else if (user.password === req.body.password) {
+		else if (user.validatePassword(req.body.password)) {
 			let userAndToken = user.serialize();
 			userAndToken.token = createAuthToken(user.serialize());
 			console.log(userAndToken);

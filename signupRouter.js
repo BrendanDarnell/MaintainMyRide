@@ -4,6 +4,18 @@ const router = express.Router();
 
 const {Users} = require('./models');
 
+const {JWT_SECRET} = require('./config');
+
+const jwt = require('jsonwebtoken');
+
+const createAuthToken = function(user) {
+  return jwt.sign({user}, JWT_SECRET, {
+    subject: user.username,
+    expiresIn: '7d',
+    algorithm: 'HS256'
+  });
+};
+
 
 router.post('/', (req, res) => {
 	const requiredFields = ['firstName', 'lastName', 'username', 'password'];
@@ -44,24 +56,7 @@ router.post('/', (req, res) => {
 
 
 	Users.findOne({username: req.body.username})
-
-	// .count()
-	// .then(count => {
-	// 	console.log(count);
-	// 	if (count > 0) {
-	// 		return Promise.reject({
-	//         	code: 422,
-	//           	reason: 'ValidationError',
-	//           	message: 'Username already taken',
-	//           	location: 'username'
- //       		});
-	// 	}
-	// })
-	
-
-
 	.then(user => {
-		// users.forEach(user => {
 		if (user) { 
 			if (user.username === req.body.username) {
 				console.log('user exists');
@@ -69,18 +64,25 @@ router.post('/', (req, res) => {
 				return Promise.reject('User exists');		
 			}
 		}
-		// })
 	})
 	.then(() => {
+		return Users.hashPassword(req.body.password);
+	})
+	.then((hash) => {
 		console.log('creating new user')
 		return Users.create({
 	 		firstName: req.body.firstName,
 	 		lastName: req.body.lastName,
 	 		username: req.body.username,
-	 		password: req.body.password,
+	 		password: hash,
  		})
 	})
-	.then(user => res.status(201).json(user.serialize()))
+	.then(user => {
+		console.log(`user hashed password ${user}`);
+		let userAndToken = user.serialize();
+		userAndToken.token = createAuthToken(user.serialize());
+		res.status(201).json(userAndToken)
+	})
 	.catch(err=> {
     	console.error(err);
     	res.status(500).json({message: "Internal server error"})

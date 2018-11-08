@@ -18,6 +18,20 @@ const {TEST_DATABASE_URL} = require('../config');
 
 const {Users} = require('../models');
 
+const bcrypt = require('bcryptjs');
+
+const {JWT_SECRET} = require('../config');
+
+const jwt = require('jsonwebtoken');
+
+const createAuthToken = function(user) {
+  return jwt.sign({user}, JWT_SECRET, {
+    subject: user.username,
+    expiresIn: '7d',
+    algorithm: 'HS256'
+  });
+};
+
 
 function generateUserData() {
 	return {
@@ -35,8 +49,7 @@ function seedUserData() {
 
   for (let i=1; i<=10; i++) {
     seedData.push(generateUserData());
-  }
-  
+  } 
   return Users.insertMany(seedData);
 }
 
@@ -59,9 +72,12 @@ describe('POST requests to /login', function(){
     	return seedUserData() 
 			.then(users => {
 				existingUser = users[0];
-				console.log(existingUser);
 				return existingUser;
-			});
+			})
+			.then(existingUser => {
+				return Users.findOneAndUpdate({username: existingUser.username}, 
+					{password: bcrypt.hashSync(existingUser.password,10)});
+			})
   	});
 
   	afterEach(function() {
@@ -88,6 +104,20 @@ describe('POST requests to /login', function(){
 		    })
 	});
 
+	it('Should return a token on Post requests', function() {
+		let token;
+		return chai.request(app)
+			.post('/login')
+			.send({username: existingUser.username, password: existingUser.password})
+			.then(function(res) {
+				token = res.body.token;
+				return Users.findOne({username: existingUser.username});
+			})
+			.then(function(user) {
+				expect(token).to.equal(createAuthToken(user.serialize()));
+			})
+	});
+
 	it('Should reject login requests without credentials', function() {
 		return chai.request(app)
 			.post('/login')
@@ -97,7 +127,7 @@ describe('POST requests to /login', function(){
 			})
 	});
 
-	it('Should reject login requests without invalid credentials', function() {
+	it('Should reject login requests with invalid credentials', function() {
 		return chai.request(app)
 			.post('/login')
 			.send({username: "fakeUsername", password: "fakePassword"})

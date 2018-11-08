@@ -2,9 +2,11 @@ const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 
 const {Users} = require('./models');
 
+const {JWT_SECRET} = require('./config');
+
 const jwtStrategy = new JwtStrategy(
 	{
-	secretOrKey: 'brendan',
+	secretOrKey: JWT_SECRET,
     jwtFromRequest: ExtractJwt.fromBodyField('token'),
     algorithms: ['HS256']
   	},

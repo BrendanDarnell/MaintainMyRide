@@ -18,6 +18,18 @@ const {TEST_DATABASE_URL} = require('../config');
 
 const {Users, Vehicles, Maintenance} = require('../models');
 
+const {JWT_SECRET} = require('../config');
+
+const jwt = require('jsonwebtoken');
+
+const createAuthToken = function(user) {
+  return jwt.sign({user}, JWT_SECRET, {
+    subject: user.username,
+    expiresIn: '7d',
+    algorithm: 'HS256'
+  });
+};
+
 
 function generateUserData() {
 	return {
@@ -58,6 +70,8 @@ describe('/users endpoint', function(){
 
 	let newMaintTwo;
 
+	let token;
+
 	before(function(){
 		return runServer(TEST_DATABASE_URL);
 	});
@@ -66,13 +80,15 @@ describe('/users endpoint', function(){
     	return seedUserData() 
 			.then(users => {
 				existingUser = users[0];
+				token = createAuthToken(existingUser.serialize());
 				newVehicle = {
 					username: existingUser.username,
 					name: "Frontier",
 					year: 2013,
 					make: "Nissan",
 					model: "Frontier",
-					engine: "4.0L V6"
+					engine: "4.0L V6",
+					token: token
 				}
 				newMaint = {
 					username: existingUser.username,
@@ -81,7 +97,8 @@ describe('/users endpoint', function(){
 					mileage: "150,000",
 					date: "10/17/2018",
 					nextScheduled: "160,000 miles",
-					notes: "replaced drain plug"
+					notes: "replaced drain plug",
+					token: token
 				}
 				newMaintTwo = {
 				username: existingUser.username,
@@ -90,12 +107,16 @@ describe('/users endpoint', function(){
 				mileage: "175,000",
 				date: "10/19/2018",
 				nextScheduled: "180,000 miles",
-				notes: "brake fluid was low"
+				notes: "brake fluid was low",
+				token: token
 				}
-
-				// console.log(existingUser);
-				return existingUser;
+				return Users.findOne({username: existingUser.username});
 			});
+			// .then(user => {
+			// 	token = createAuthToken(user.serialize());
+			// 	console.log(token);
+			// 	return token;
+			// })
   	});
 
   	afterEach(function() {
@@ -160,7 +181,7 @@ describe('/users endpoint', function(){
 					console.log(`/maint ${existingUser}`)
 					return chai.request(app)
 						.post('/users/maintenance')
-						.send({username: existingUser.username, vehicleName: "Frontier"});
+						.send({username: existingUser.username, vehicleName: "Frontier", token: token});
 				})
 				.then(function(res) {
 					console.log(res.body);
@@ -237,7 +258,7 @@ describe('/users endpoint', function(){
 				.then(function(log) {
 					return chai.request(app)
 						.put('/users/maintenance/update')
-						.send({ _id: log._id, notes:'did not replace drain plug', nextScheduled: '158,000'})
+						.send({ _id: log._id, notes:'did not replace drain plug', nextScheduled: '158,000', token: token})
 						.then(function(res) {
 							expect(res).to.have.status(200);
 							expect(res).to.be.json;
@@ -283,7 +304,7 @@ describe('/users endpoint', function(){
 					console.log(`deleting id ${log}`)
 					return chai.request(app)
 						.del('/users/maintenance/delete')
-						.send({_id: log._id})
+						.send({_id: log._id, token: token})
 						.then(function(res) {
 							expect(res).to.have.status(200);
 							return Maintenance.findOne({_id: res._id});	

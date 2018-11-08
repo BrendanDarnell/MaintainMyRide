@@ -1,6 +1,8 @@
 'use strict';
 
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+
+const bcrypt = require('bcryptjs');
 
 const vehiclesSchema = mongoose.Schema({
 	name: {type: String, required: true},
@@ -38,7 +40,15 @@ usersSchema.methods.serialize = function() {
 		username: this.username,
 		vehicles: this.vehicles
 	}
-}
+};
+
+usersSchema.methods.validatePassword = function(password) {
+  return bcrypt.compareSync(password, this.password);
+};
+
+usersSchema.statics.hashPassword = function(password) {
+  return bcrypt.hash(password, 10);
+};
 
 const Users = mongoose.model('Users', usersSchema);
 
