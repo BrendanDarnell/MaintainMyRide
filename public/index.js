@@ -1,5 +1,7 @@
 'use strict';
 
+let token;
+
 let maintenanceForm = 
 	`<form class="add-maint" aria-live="assertive" hidden>
 		<label for="type">Type</label>
@@ -77,7 +79,10 @@ function loginUser() {
 
 
 function renderUserData(user) {
-	console.log(user);
+	if (!token) {
+		token = user.token;
+	}
+	console.log(token);
 	$('.user').empty();
 	$('.user').append(
 		`<h2 class="welcome-user">Welcome, <span class="username">${user.username}</span></h2>
@@ -129,6 +134,7 @@ function getVehicleData() {
 		make: $('[name="make"]').val(),
 		model: $('[name="model"]').val(),
 		engine: $('[name="engine"]').val(),
+		token: token
 	}
 }
 
@@ -160,7 +166,8 @@ function addVehicle() {
 function getMaintenance(vehicleName) {
 	let reqData = {
 		username: $('.username').text(),
-		vehicleName: vehicleName
+		vehicleName: vehicleName,
+		token: token
 	}
 
 	console.log(reqData);
@@ -249,7 +256,7 @@ function newMaintData(vehicleName) {
 		date: $('[name="date"]').val(),
 		nextScheduled: $('[name="nextScheduled"]').val(),
 		notes: $('[name="notes"]').val(),
-		links: $('[name="links"]').val(),
+		token: token
 	}
 }
 
@@ -278,7 +285,7 @@ function getMaintUpdate(maintId) {
 		date: $('[name="date"]').val(),
 		nextScheduled: $('[name="nextScheduled"]').val(),
 		notes: $('[name="notes"]').val(),
-		links: $('[name="links"]').val(),
+		token: token
 	}
 
 	Object.keys(updateValues).forEach(key => {
@@ -310,7 +317,7 @@ function deleteMaint(maintId) {
 	return $.ajax({
 		url: 'users/maintenance/delete',
 		type: 'DELETE',
-		data: `{"_id": "${maintId}"}`,
+		data: `{"_id": "${maintId}", "token": ${token}}`,
 		contentType: 'application/json',
 		dataType: 'json',
 	})

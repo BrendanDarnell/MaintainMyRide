@@ -4,7 +4,13 @@ const router = express.Router();
 
 const {Users, Vehicles, Maintenance} = require('./models');
 
-// const options = {new: true}
+const passport = require('passport');
+
+const {jwtStrategy} = require('./jwtStrategy');
+
+passport.use(jwtStrategy);
+
+router.use(passport.authenticate('jwt', { session: false }));
 
 
 router.post('/vehicle/add', (req,res) => {
