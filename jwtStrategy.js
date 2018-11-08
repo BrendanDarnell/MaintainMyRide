@@ -12,7 +12,6 @@ const jwtStrategy = new JwtStrategy(
   	},
   
 	(payload, done) => {
-	  	console.log('payload',payload.user.username);
 	  	Users.findOne({username: payload.user.username}, (err, user) => {
 	        if (err) {
 	            return done(err, false);

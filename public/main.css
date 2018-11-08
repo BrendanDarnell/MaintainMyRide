@@ -13,9 +13,7 @@ body {
 }
 
 .redirect-button {
-	/*cursor: pointer;*/
 	color: white;
-	/*#0000EE;*/
 }
 
 header {
@@ -61,33 +59,15 @@ section {
 	background-image: url("motorcycle2.jpg");
 	background-size: cover;
 	background-position: 52% center;
-	/*filter: blur(3px);
-  	-webkit-filter: blur(3px);*/
 }
 
 .div-login-form, .div-signup-form {
 	position: relative;
-	/*color: #feda6a;*/
-	/*width: 90%;*/
-	/*margin-left: auto;
-	margin-right: auto;*/
-	/*border: 1px solid black;
-	box-shadow: 3px 3px black;
-	border-radius: 15px;*/
 	top: -100vh;
 	min-height: 85vh;
 	height: 100%;
 	background-color: rgba(28, 29, 33, 0.65); 
-	/*padding-top: 12vh;*/
 }
-
-/*.div-login-form {
-	height: 40vh;
-}
-
-.div-signup-form {
-	height: 60vh;
-}*/
 
 .login-form input, .signup-form input {
 	width: 60%;
@@ -158,7 +138,6 @@ section {
 	color: #feda6a;	
 }
 
-/*.user > button {*/
 .add-vehicle-button, .submit-vehicle-button, .submit-maint-button, .add-maint-button, 
 .update-maint-button, .delete-maint-button, .submit-update-button {
 	border-radius: 8px;
@@ -278,6 +257,5 @@ li {
 	font-weight: 900;
 	margin-right: 2%;
 	margin-left: 2%;
-
 }
 

@@ -47,8 +47,7 @@ function seedUserData() {
 
   for (let i=1; i<=10; i++) {
     seedData.push(generateUserData());
-  }
-  
+  } 
   return Users.insertMany(seedData);
 }
 
@@ -112,11 +111,6 @@ describe('/users endpoint', function(){
 				}
 				return Users.findOne({username: existingUser.username});
 			});
-			// .then(user => {
-			// 	token = createAuthToken(user.serialize());
-			// 	console.log(token);
-			// 	return token;
-			// })
   	});
 
   	afterEach(function() {
@@ -129,14 +123,12 @@ describe('/users endpoint', function(){
 
 	
 	describe('/users/vehicles/add', function() {
-		// this.timeout(5000);
-		it('Should add a new vehicle on Post requests', function(){
-			
+		
+		it('Should add a new vehicle on Post requests', function(){		
 			return chai.request(app)
 				.post('/users/vehicle/add')
 				.send(newVehicle)
 				.then(function(res) {
-					console.log(existingUser);
 					expect(res).to.have.status(201);
 					expect(res).to.be.json;
 					expect(res.body).to.be.a('object');
@@ -170,21 +162,17 @@ describe('/users endpoint', function(){
 
 	
 	describe('/users/maintenance', function() {
-
+		
 		it('Should return all maintenace logs for specified user and vehicle', function() {
-			
 			existingUser.vehicles.push(newVehicle);
 			existingUser.save();		
 			return Maintenance.insertMany([newMaint, newMaintTwo])
 				.then(function(maint) {
-					console.log(maint);
-					console.log(`/maint ${existingUser}`)
 					return chai.request(app)
 						.post('/users/maintenance')
 						.send({username: existingUser.username, vehicleName: "Frontier", token: token});
 				})
 				.then(function(res) {
-					console.log(res.body);
 					expect(res).to.have.status(200);
 					expect(res).to.be.json;
 					expect(res.body).to.be.an('array');
@@ -208,14 +196,12 @@ describe('/users endpoint', function(){
 	describe('/users/maintenace/add', function() {
 
 		it('Should add a new maintenance log', function() {
-
 			existingUser.vehicles.push(newVehicle);
 			existingUser.save();	
 			return chai.request(app)
 				.post('/users/maintenance/add')
 				.send(newMaint)
 				.then(function(res) {
-					console.log(res.body);
 					expect(res).to.have.status(201);
 					expect(res).to.be.json;
 					expect(res.body).to.be.an('array');
@@ -234,7 +220,6 @@ describe('/users endpoint', function(){
 				    return Maintenance.findOne({_id: res.body[0]._id});
 				})
 				.then(function(log){
-		    		console.log(`add log = ${log}`);
 			        expect(log.username).to.equal(newMaint.username);
 			        expect(log.vehicleName).to.equal(newMaint.vehicleName);
 					expect(log.type).to.equal(newMaint.type);
@@ -278,7 +263,6 @@ describe('/users endpoint', function(){
 				    		return Maintenance.findOne({_id: res.body[0]._id});
 						})
 						.then(function(log) {
-				    		console.log(`update log = ${log.notes}`);
 					        expect(log.username).to.equal(newMaint.username);
 					        expect(log.vehicleName).to.equal(newMaint.vehicleName);
 							expect(log.type).to.equal(newMaint.type);
@@ -301,7 +285,6 @@ describe('/users endpoint', function(){
 
 			return Maintenance.create(newMaint)
 				.then(function(log) {
-					console.log(`deleting id ${log}`)
 					return chai.request(app)
 						.del('/users/maintenance/delete')
 						.send({_id: log._id, token: token})
@@ -315,6 +298,4 @@ describe('/users endpoint', function(){
 				})	
 		})
 	})
-
-
 });

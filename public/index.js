@@ -82,7 +82,6 @@ function renderUserData(user) {
 	if (!token) {
 		token = user.token;
 	}
-	console.log(token);
 	$('.user').empty();
 	$('.user').append(
 		`<h2 class="welcome-user">Welcome, <span class="username">${user.username}</span></h2>
@@ -104,9 +103,12 @@ function renderUserData(user) {
 			<input type="text" name="engine">
 			<button type="submit" class="submit-vehicle-button">Submit</button>
 			<span class="error" name="vehicle-error"></span>
-		</form>
-		<span class='user-inst'>Click vehicle name to show maintenance logs</span>`
+		</form>`
 	);
+
+	if(user.vehicles) {
+		$('.user').append(`<span class='user-inst'>Click vehicle name to show maintenance logs</span>`);		
+	}
 	
 	user.vehicles.forEach(vehicle => {
 		let vehicleInfo = '';
@@ -170,8 +172,6 @@ function getMaintenance(vehicleName) {
 		token: token
 	}
 
-	console.log(reqData);
-
 	return $.ajax({
 			url: 'users/maintenance',
 			type: 'POST',
@@ -194,7 +194,6 @@ function renderMaintenace(logs) {
 		return Number(b.mileage.replace(/,/g,"")) - Number(a.mileage.replace(/,/g,""));
 	});
 
-	
 	$(`[name=${vehicleName}] > ul`).remove();
 	$(`[name=${vehicleName}] > button`).remove();
 	$(`[name=${vehicleName}] > form`).remove();
@@ -223,8 +222,8 @@ function renderMaintenace(logs) {
 
 function toggleMaintenance() {
 	let vehicleName = $(event.target).text();
-	console.log(`toggle ${vehicleName}`);
 	let existingLogs = $(`[name=${vehicleName}] > ul`).text();
+	
 	if(existingLogs) {
 		$(`[name=${vehicleName}] > ul, [name=${vehicleName}] > .add-maint-button, 
 			[name=${vehicleName}] > .delete-maint-button, 
@@ -263,7 +262,7 @@ function newMaintData(vehicleName) {
 
 function addMaint(vehicleName) {
 	let newMaint = newMaintData(vehicleName);
-	console.log(newMaint);
+
 	return $.ajax({
 			url: 'users/maintenance/add',
 			type: 'POST',
@@ -299,7 +298,7 @@ function getMaintUpdate(maintId) {
 
 function updateMaint(maintId) {
 	let updatedMaint = getMaintUpdate(maintId);
-	console.log(updatedMaint);
+
 	return $.ajax({
 		url: 'users/maintenance/update',
 		type: 'PUT',
@@ -330,9 +329,6 @@ function handleEvents() {
 	$('.signup-button').on('click', (event) => {
 		event.preventDefault();
 		event.stopPropagation();
-		// $('.signup').prop('hidden', true);
-		// $('.user').prop('hidden', false);
-		console.log('post request for new user');
 		signupUser()
 			.then(user => {
 				$('.signup').prop('hidden', true);
@@ -345,9 +341,6 @@ function handleEvents() {
 	$('.login-button').on('click', (event) => {
 		event.preventDefault();
 		event.stopPropagation();
-		// $('.login').prop('hidden', true);
-		// $('.user').prop('hidden', false);
-		console.log('post request for login');
 		loginUser()
 			.then(user => {
 				$('.login').prop('hidden', true);
@@ -376,7 +369,6 @@ function handleEvents() {
 	$('.user').on('click', '.submit-vehicle-button', (event) => {
 		event.preventDefault();
 		event.stopPropagation();
-		console.log('adding new vehicle');
 		addVehicle()
 			.then(user => {
 				renderUserData(user);
@@ -402,10 +394,8 @@ function handleEvents() {
 	$('.user').on('click', '.submit-maint-button', (event) => {
 		event.preventDefault();
 		event.stopPropagation();
-		console.log('adding new log');
 		let vehicleName = $(event.currentTarget).closest('div').attr('name');
 		addMaint(vehicleName)
-			// .then(maint=>console.log(maint))
 			.then(user => {
 				renderMaintenace(user);
 				$('.add-maint').prop('hidden', true);
@@ -440,7 +430,6 @@ function handleEvents() {
 		let maintId = $(event.target).prop('name');
 		maintId = maintId.split('-');
 		maintId = maintId[1];
-		console.log(maintId);
 		deleteMaint(maintId)
 			.then(() => {
 				$(`[id = ${maintId}]`).remove();
@@ -448,7 +437,6 @@ function handleEvents() {
 				$(`[name = delete-${maintId}]`).remove();
 			});
 	});
-
 }
 
 

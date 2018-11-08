@@ -95,7 +95,6 @@ describe('POST requests to /signup', function(){
 		        return Users.findOne({username: newUser.username})
 			})
 			.then(function(user) {
-				console.log(user);
 				expect(user._id).to.not.be.empty;
 				expect(user.username).to.equal(newUser.username);
 				expect(user.firstName).to.equal(newUser.firstName);

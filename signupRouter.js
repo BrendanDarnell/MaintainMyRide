@@ -35,9 +35,6 @@ router.post('/', (req, res) => {
 	
 	try {
 		const tooSmall = Object.keys(sizedFields).forEach(field => {
-			console.log(req.body[field].length < sizedFields[field].min);
-			console.log(sizedFields[field].min);
-			console.log(sizedFields.username.min);
 			if (req.body[field].length < sizedFields[field].min) {
 				return res.status(400).json({message: `${field} needs to be at least ${sizedFields[field].min} characters long`});
 			}
@@ -78,7 +75,6 @@ router.post('/', (req, res) => {
  		})
 	})
 	.then(user => {
-		console.log(`user hashed password ${user}`);
 		let userAndToken = user.serialize();
 		userAndToken.token = createAuthToken(user.serialize());
 		res.status(201).json(userAndToken)
@@ -89,6 +85,5 @@ router.post('/', (req, res) => {
  	});
 
 });
-
 
 module.exports = router;

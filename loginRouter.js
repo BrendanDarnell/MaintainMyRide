@@ -30,7 +30,6 @@ router.post('/', (req, res) => {
 	Users.findOne({username: req.body.username})
 	.then(user => {	
 		if (!user) { 
-			console.log('username does not exist');
 			res.status(400).json({message: 'username does not exist'});
 			return Promise.reject('username does not exist');		
 		}
@@ -39,9 +38,9 @@ router.post('/', (req, res) => {
 			return Promise.reject('wrong password');
 		}
 		else if (user.validatePassword(req.body.password)) {
+			console.log(`logging in ${user.serialize()}`)
 			let userAndToken = user.serialize();
 			userAndToken.token = createAuthToken(user.serialize());
-			console.log(userAndToken);
 			return res.status(200).json(userAndToken);			
 		}
 		else {

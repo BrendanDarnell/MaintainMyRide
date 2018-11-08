@@ -37,15 +37,12 @@ router.post('/vehicle/add', (req,res) => {
 		let vehicle;
 		if (user.vehicles) {
 			vehicle = user.vehicles.find((vehicle) => {
-				console.log(vehicle.name);
-				console.log(req.body.name);
 				return vehicle.name === req.body.name;
 			})
 		}
 		return vehicle;
 	})
 	.then(vehicle => {
-		console.log(vehicle);
 		if (vehicle) {
 			return res.status(400).json({message: 'vehicle already exists'});
 		}
@@ -75,8 +72,6 @@ router.post('/maintenance', (req,res) => {
 	Users.findOne({username: req.body.username})
     .then(user => {
     	return user.vehicles.find((vehicle) => {
-    		console.log(vehicle.name);
-    		console.log(req.body.vehicleName);
     		return vehicle.name === req.body.vehicleName;
     	})
     })
@@ -86,7 +81,6 @@ router.post('/maintenance', (req,res) => {
 	    }
 	   	else {
 	    	res.status(400).json({message: 'vehicle not found'});
-	    	// return Promise.reject('Could not find vehicle');
 	    }
 	})
 	.then((maintenance) => res.status(200).json(maintenance))
@@ -100,7 +94,6 @@ router.post('/maintenance', (req,res) => {
 router.post('/maintenance/add', (req,res) => {
 	const requiredFields = ['username','vehicleName', 'type', 'mileage', 'date'];
 	requiredFields.forEach((field) => {
-		console.log(field);
 		if (!(req.body[field])){
 			console.log(`missing field = ${field}`);
 			const message = `A ${field} is required to add maintenance log`;
@@ -112,11 +105,8 @@ router.post('/maintenance/add', (req,res) => {
     Users.findOne({username: req.body.username})
     .then(user => {
     	let vehicle = user.vehicles.find((vehicle) => {
-    		console.log(vehicle._id);
-    		console.log(req.body.vehicleId);
     		return vehicle.name === req.body.vehicleName;
     	});
-    	console.log(vehicle);
     	return vehicle;
     })
     .then(vehicle => {
@@ -125,7 +115,6 @@ router.post('/maintenance/add', (req,res) => {
     	}
     	else {
     		res.status(400).json({message: 'vehicle not found'});
-    		// return Promise.reject('Could not find vehicle');
     	}
     })
     .then(() => {
@@ -186,6 +175,4 @@ router.delete('/maintenance/delete', (req,res) => {
 	
 });
 	
-
-
 module.exports = router;

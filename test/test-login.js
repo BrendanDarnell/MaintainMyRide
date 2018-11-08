@@ -89,7 +89,6 @@ describe('POST requests to /login', function(){
 	});
 
 	it('Should login existing users on POST requests', function(){
-		// console.log(existingUser);
 		return chai.request(app)
 			.post('/login')
 			.send({username: existingUser.username, password: existingUser.password})
