@@ -308,7 +308,7 @@ function updateMaint(maintId) {
 	})
 	.fail(function(jqXHR) {
 			$('[name= maint-error]').text(jqXHR.responseJSON.message);
-		});;	
+		});	
 }
 
 
@@ -316,11 +316,13 @@ function deleteMaint(maintId) {
 	return $.ajax({
 		url: 'users/maintenance/delete',
 		type: 'DELETE',
-		data: `{"_id": "${maintId}", "token": ${token}}`,
+		data: `{"_id": "${maintId}", "token": "${token}"}`,
 		contentType: 'application/json',
 		dataType: 'json',
 	})
-	.fail(()=> console.log('failed to update maintenance'));
+	.fail(function(jqXHR) {
+			$('[name= maint-error]').text(jqXHR.responseJSON.message);
+		});	
 }
 
 
