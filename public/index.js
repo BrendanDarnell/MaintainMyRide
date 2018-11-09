@@ -107,7 +107,7 @@ function renderUserData(user) {
 	);
 
 	if(user.vehicles) {
-		$('.user').append(`<span class='user-inst'>Click vehicle name to show maintenance logs</span>`);		
+		$('.user').append(`<span class='user-inst'>Click vehicle name to view/add maintenance logs</span>`);		
 	}
 	
 	user.vehicles.forEach(vehicle => {
