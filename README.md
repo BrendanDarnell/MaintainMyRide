@@ -1,6 +1,6 @@
 # Maintain My Ride
 
-Maintain My Ride is an app for do-it-yourselfers who want any easy way to keep track of their vehicle maintenance records.  The app allows users to create an account, add all of their vehicles, and log maintenace records for each vehicle.
+Maintain My Ride is an app for do-it-yourselfers who want any easy way to keep track of their vehicle maintenance records.  The app allows users to create an account, add all of their vehicles, and log maintenace records for each vehicle.  To demo the app, login with the username DemoUser and use password for the password.
 
 ## Using the App
 
